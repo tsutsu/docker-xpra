@@ -1,0 +1,7 @@
+#!/bin/bash
+
+mkdir -p /var/run/sshd 
+/usr/sbin/sshd
+
+echo "$@" > /run/xpra-cmdline-args
+exec xpra start :14 --no-daemon --no-pulseaudio --no-notifications --exit-with-children

@@ -1,0 +1,9 @@
+#!/bin/bash
+
+if [ -z "$1" ]; then
+  echo "missing application argument"
+  exit 1
+fi
+
+XPRA_CMDLINE_ARGS=$(cat /run/xpra-cmdline-args)
+exec $XPRA_CMDLINE_ARGS

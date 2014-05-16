@@ -1,0 +1,20 @@
+#!/usr/bin/env ruby
+
+require 'shellwords'
+require 'json'
+
+unless ARGV.length >= 1
+  $stderr.puts "usage: #{File.basename($0)} app-name <app-args ...>"
+  Kernel.exit 1
+end
+
+appname = ARGV.shift
+container_id = `docker run -d xpra-#{appname} #{ARGV.map{ |a| Shellwords.escape(a) }.join(' ')}`.chomp
+
+container = JSON.parse(`docker inspect #{container_id}`)[0]
+container_ip = container['NetworkSettings']['IPAddress']
+
+system "xpra", "attach", "ssh:root@#{ container_ip }:14"
+
+system "docker", "kill", container_id, out: :close
+system "docker", "rm", container_id, out: :close
